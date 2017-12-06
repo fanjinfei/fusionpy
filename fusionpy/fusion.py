@@ -148,6 +148,17 @@ class Fusion(FusionRequester):
     def get_datasource(self, datasource, collection=None):
         return FusionDatasource(self, datasource, collection)
 
+    def get_solr_query(self, query):
+        try:
+            resp = self.request('GET', '/api/apollo/solr/'+query)
+        except FusionError as fe:
+            if fe.response is not None and fe.response.status > 200:
+                raise FusionError(fe.response, message="Fusion is not responding to solr query.")
+            else:
+                raise
+
+        rd = json.loads(resp.data)
+        return rd
 
 class Pipelines(FusionRequester):
     def __init__(self, fusion_instance):
