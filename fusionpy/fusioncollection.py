@@ -9,6 +9,28 @@ from connectors import FusionRequester
 
 __author__ = 'jscarbor'
 
+class FusionDatasource(FusionRequester):
+    """
+    A FusionCollection provides access to a data source in Fusion.
+    """
+
+    def __init__(self, fusion_instance, datasource_name, collection_name):
+        super(FusionDatasource, self).__init__(fusion_instance)
+        self.collection_name = collection_name
+        self.datasource_name = datasource_name
+        #self.collection_data = None
+        #self.config_files = ConfigFiles(self)
+        #self.field_types = FieldTypes(self)
+        #self.fields = Fields(self)
+
+    def request(self, method, path, headers=None, fields=None, body=None, validate=None):
+        if path.find("$") >= 0:
+            path = Template(path).safe_substitute(datasource=self.datasource_name)
+        return super(FusionDatasource, self).request(method, path, headers, fields, body, validate)
+
+    def history(self):
+        resp = self.request('GET', "connectors/history/$datasource")
+        return json.loads(resp.data)
 
 class FusionCollection(FusionRequester):
     """

@@ -2,6 +2,7 @@
 import json
 from fusionpy import FusionError
 from fusionpy.fusioncollection import FusionCollection
+from fusionpy.fusioncollection import FusionDatasource
 from fusionpy.connectors import FusionRequester, HttpFusionRequester
 import re
 import os
@@ -143,6 +144,9 @@ class Fusion(FusionRequester):
         resp = self.request('POST', "/api", body={"password": password})
         if resp.status != 201:
             raise FusionError(resp)
+
+    def get_datasource(self, datasource, collection=None):
+        return FusionDatasource(self, datasource, collection)
 
 
 class Pipelines(FusionRequester):

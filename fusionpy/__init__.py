@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from __future__ import print_function
 
-__all__ = ['Fusion', 'FusionCollection', 'FusionError', 'FusionRequester', 'HttpFusionRequester']
+__all__ = ['Fusion', 'FusionDatasource', 'FusionCollection', 'FusionError', 'FusionRequester', 'HttpFusionRequester']
 
 class FusionError(IOError):
     def __init__(self, response, request_body=None, message=None, url=None):
