@@ -9,6 +9,33 @@ from connectors import FusionRequester
 
 __author__ = 'jscarbor'
 
+class FusionIndexPipeline(FusionRequester):
+    """
+    A FusionCollection provides access to a data source in Fusion.
+    """
+
+    def __init__(self, fusion_instance, pipeline_name):
+        super(FusionIndexPipeline, self).__init__(fusion_instance)
+        self.pipline_name = pipeline_name
+        #self.collection_data = None
+        #self.config_files = ConfigFiles(self)
+        #self.field_types = FieldTypes(self)
+        #self.fields = Fields(self)
+
+    def request(self, method, path, headers=None, fields=None, body=None, validate=None):
+        if path.find("$") >= 0:
+            path = Template(path).safe_substitute(datasource=self.datasource_name)
+        return super(FusionIndexPipeline, self).request(method, path, headers, fields, body, validate)
+
+    def get_config(self):
+        resp = self.request('GET', "index-pipelines/"+self.pipeline_name)
+        return json.loads(resp.data)
+
+    def get_list(self):
+        resp = self.request('GET', "index-pipelines")
+        return json.loads(resp.data)
+
+
 class FusionDatasource(FusionRequester):
     """
     A FusionCollection provides access to a data source in Fusion.
@@ -30,6 +57,10 @@ class FusionDatasource(FusionRequester):
 
     def history(self):
         resp = self.request('GET', "connectors/history/$datasource")
+        return json.loads(resp.data)
+
+    def get_config(self):
+        resp = self.request('GET', "connectors/datasources/"+self.datasource_name)
         return json.loads(resp.data)
 
 class FusionCollection(FusionRequester):

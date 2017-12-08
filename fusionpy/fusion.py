@@ -2,7 +2,7 @@
 import json
 from fusionpy import FusionError
 from fusionpy.fusioncollection import FusionCollection
-from fusionpy.fusioncollection import FusionDatasource
+from fusionpy.fusioncollection import FusionDatasource, FusionIndexPipeline
 from fusionpy.connectors import FusionRequester, HttpFusionRequester
 import re
 import os
@@ -148,6 +148,9 @@ class Fusion(FusionRequester):
     def get_datasource(self, datasource, collection=None):
         return FusionDatasource(self, datasource, collection)
 
+    def get_index_pipeline(self, pipeline):
+        return FusionIndexPipeline(self, pipeline)
+
     def get_solr_query(self, query):
         try:
             resp = self.request('GET', '/api/apollo/solr/'+query)
@@ -156,9 +159,8 @@ class Fusion(FusionRequester):
                 raise FusionError(fe.response, message="Fusion is not responding to solr query.")
             else:
                 raise
+        return json.loads(resp.data)
 
-        rd = json.loads(resp.data)
-        return rd
 
 class Pipelines(FusionRequester):
     def __init__(self, fusion_instance):
