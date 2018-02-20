@@ -16,7 +16,7 @@ class FusionIndexPipeline(FusionRequester):
 
     def __init__(self, fusion_instance, pipeline_name):
         super(FusionIndexPipeline, self).__init__(fusion_instance)
-        self.pipline_name = pipeline_name
+        self.pipeline_name = pipeline_name
         #self.collection_data = None
         #self.config_files = ConfigFiles(self)
         #self.field_types = FieldTypes(self)
@@ -30,6 +30,16 @@ class FusionIndexPipeline(FusionRequester):
     def get_config(self):
         resp = self.request('GET', "index-pipelines/"+self.pipeline_name)
         return json.loads(resp.data)
+
+    def create_config(self, config):
+        assert (self.pipeline_name == config['id'])
+        resp = self.request('POST', "index-pipelines/", body=config)
+
+    def update_config(self, config):
+        resp = self.request('PUT', "index-pipelines/"+self.pipeline_name, body=config)
+
+    def delete_config(self, config):
+        resp = self.request('DELETE', "index-pipelines/"+self.pipeline_name, body=config)
 
     def get_list(self):
         resp = self.request('GET', "index-pipelines")
