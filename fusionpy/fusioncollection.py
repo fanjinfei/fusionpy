@@ -9,6 +9,42 @@ from connectors import FusionRequester
 
 __author__ = 'jscarbor'
 
+class FusionQueryPipeline(FusionRequester):
+    """
+    A FusionCollection provides access to a data source in Fusion.
+    """
+
+    def __init__(self, fusion_instance, pipeline_name):
+        super(FusionQueryPipeline, self).__init__(fusion_instance)
+        self.pipeline_name = pipeline_name
+        #self.collection_data = None
+        #self.config_files = ConfigFiles(self)
+        #self.field_types = FieldTypes(self)
+        #self.fields = Fields(self)
+
+    def request(self, method, path, headers=None, fields=None, body=None, validate=None):
+        if path.find("$") >= 0:
+            path = Template(path).safe_substitute(datasource=self.datasource_name)
+        return super(FusionQueryPipeline, self).request(method, path, headers, fields, body, validate)
+
+    def get_config(self):
+        resp = self.request('GET', "query-pipelines/"+self.pipeline_name)
+        return json.loads(resp.data)
+
+    def create_config(self, config):
+        assert (self.pipeline_name == config['id'])
+        resp = self.request('POST', "query-pipelines/", body=config)
+
+    def update_config(self, config):
+        resp = self.request('PUT', "query-pipelines/"+self.pipeline_name, body=config)
+
+    def delete_config(self, config):
+        resp = self.request('DELETE', "query-pipelines/"+self.pipeline_name, body=config)
+
+    def get_list(self):
+        resp = self.request('GET', "query-pipelines")
+        return json.loads(resp.data)
+
 class FusionIndexPipeline(FusionRequester):
     """
     A FusionCollection provides access to a data source in Fusion.

@@ -3,6 +3,7 @@ import json
 from fusionpy import FusionError
 from fusionpy.fusioncollection import FusionCollection
 from fusionpy.fusioncollection import FusionDatasource, FusionIndexPipeline
+from fusionpy.fusioncollection import FusionQueryPipeline
 from fusionpy.connectors import FusionRequester, HttpFusionRequester
 import re
 import os
@@ -150,6 +151,9 @@ class Fusion(FusionRequester):
 
     def get_index_pipeline(self, pipeline):
         return FusionIndexPipeline(self, pipeline)
+
+    def get_query_pipeline(self, pipeline):
+        return FusionQueryPipeline(self, pipeline)
 
     def get_solr_query(self, query):
         try:
